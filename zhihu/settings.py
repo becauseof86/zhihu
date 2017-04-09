@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'zhihu.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = ''
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY =False 
