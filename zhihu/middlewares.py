@@ -6,16 +6,30 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-from .useragent import agents
-import random
+from fake_useragent import UserAgent
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+import get_oauth
+from scrapy.downloadermiddlewares.httpauth import HttpAuthMiddleware
 
 class UserAgentMiddlewareNew(UserAgentMiddleware):
 
     def process_request(self,request,spider):
-        agent=random.choice(agents)
+        uaobject=UserAgent()
+        agent=uaobject.chrome
         request.headers['User-Agent']=agent
+        
+class HttpAuthMiddlewareNew(HttpAuthMiddleware):
 
+    def spider_opened(self, spider):
+        auth=get_oauth.get_oauth()
+        if auth:
+            self.auth=auth
+        else:
+            raise Exception('can not get oauth')
+    def process_request(self, request, spider):
+        auth = getattr(self, 'auth', None)
+        if auth and b'Authorization' not in request.headers:
+            request.headers[b'Authorization'] = b'oauth '+auth
 
 class ZhihuSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,

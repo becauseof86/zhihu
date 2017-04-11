@@ -25,4 +25,7 @@ class ZhihuPipeline(object):
 
     def process_item(self, item, spider):
         self.db[self.collection_name].insert(item)
-        return item
+        if item['id']:
+            return item['id']
+        else:
+            print 'item failed'

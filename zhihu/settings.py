@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'zhihu.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
+#USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY =False 
@@ -27,7 +27,7 @@ CONCURRENT_REQUESTS =1
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY =9 
+DOWNLOAD_DELAY =4 
 # The download delay setting will honor only one of:
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
@@ -55,9 +55,11 @@ DEFAULT_REQUEST_HEADERS = {
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
- #   'zhihu.middlewares.UserAgentMiddlewareNew': 500,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'zhihu.middlewares.HttpAuthMiddlewareNew':300, 
+    'zhihu.middlewares.UserAgentMiddlewareNew': 500,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':750,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -92,8 +94,10 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-#SCHEDULER = "scrapy_redis.scheduler.Scheduler"
-#DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
-#REDIS_URL = 'redis://:Aliyun1986@127.0.0.1:9876'
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+SCHEDULER_PERSIST=True
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+REDIS_URL = 'redis://:Aliyun1986@127.0.0.1:9876'
 MONGO_URI='mongodb://admin:Aliyun1986@127.0.0.1:9877'
 MONGO_DATABASE='zhihu'
+DUPEFILTER_DEBUG=True
