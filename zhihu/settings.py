@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'zhihu.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
+#USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0;IN64; X64) aPPLEwEBkIT/537.3KHTML, like Gecko) Chrome/51704.79 Safari/537.36 Edge/14.14393'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY =False 
@@ -27,7 +27,7 @@ CONCURRENT_REQUESTS =1
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY =4 
+DOWNLOAD_DELAY =1 
 # The download delay setting will honor only one of:
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
@@ -58,7 +58,9 @@ DEFAULT_REQUEST_HEADERS = {
 DOWNLOADER_MIDDLEWARES = {
     'zhihu.middlewares.HttpAuthMiddlewareNew':300, 
     'zhihu.middlewares.UserAgentMiddlewareNew': 500,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':750,
+    'zhihu.middlewares.RedirectMiddlewareNew': 600,
+    'zhihu.middlewares.HttpProxyMiddlewareNew': 750,
+    #'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':750,
 }
 
 # Enable or disable extensions
@@ -101,3 +103,5 @@ REDIS_URL = 'redis://:Aliyun1986@127.0.0.1:9876'
 MONGO_URI='mongodb://admin:Aliyun1986@127.0.0.1:9877'
 MONGO_DATABASE='zhihu'
 DUPEFILTER_DEBUG=True
+#RETRY_HTTP_CODES=[500, 502, 503, 504, 408,404,410,401]
+RETRY_TIMES=4

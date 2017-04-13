@@ -9,7 +9,10 @@ class ZhihuSpider(RedisSpider):
     #os.environ['http_proxy']='http://H4W9XP33KQ09123D:EB03BDE80E928795@proxy.abuyun.com:9020'
     #start_urls=['https://static.zhihu.com/heifetz/main.app.96aedac1d43e8facf106.js']
     def parse(self,response):
-        if 'page=1' in  response.url:
+        #if 1:
+            #print response.selector.xpath('//code/text()').extract_first()
+            #yield scrapy.Request('http://www.ip.cn/',self.parse,dont_filter=True)
+        if 'page=1' ==  response.url[-6:]:
             num=response.selector.xpath("//button[@class='Button PaginationButton Button--plain'][last()]/text()").extract_first()
             if num:
                 num=int(num)
