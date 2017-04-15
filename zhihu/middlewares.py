@@ -12,6 +12,41 @@ import get_oauth
 from scrapy.downloadermiddlewares.httpauth import HttpAuthMiddleware
 from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
+import pymongo
+import re
+import scrapy
+class DeleteRequestOfExistItemInMongodb(object):
+    collection_name='zhihu'
+    def __init__(self,mongo_uri,mongo_db):
+        self.mongo_uri=mongo_uri
+        self.mongo_db=mongo_db
+
+    @classmethod
+    def from_crawler(cls,crawler):
+        droim_object = cls(crawler.settings.get('MONGO_URI'),crawler.settings.get('MONGO_DATABASE','zhihu'))
+        #catch spider_opened signal to perform my method open_spider  in this class
+        crawler.signals.connect(droim_object.open_spider,signal=scrapy.signals.spider_opened)
+        return droim_object
+   
+    def open_spider(self,spider):
+        self.client=pymongo.MongoClient(self.mongo_uri)
+        self.db=self.client[self.mongo_db]
+        self.collection=self.db[self.collection_name]
+        items=self.collection.aggregate([{"$group":{"_id":"$url_token"}}])
+        items_list=list(items)
+        self.items_set=set([a["_id"] for a in items_list])
+        self.client.close()
+
+
+    def process_request(self, request, spider):
+        #this method auto execute,no need to bound in signal
+        id_object=re.search(r'/members/(.*?)\?',request.url)
+        if id_object:
+            id=id_object.group(1)
+            if id in self.items_set:
+                spider.logger.info('ignore request whose item is alredy in mongodb')
+                raise scrapy.exceptions.IgnoreRequest
+
 class UserAgentMiddlewareNew(UserAgentMiddleware):
 
     def process_request(self,request,spider):
@@ -20,7 +55,7 @@ class UserAgentMiddlewareNew(UserAgentMiddleware):
         request.headers['User-Agent']=agent
         
 class HttpAuthMiddlewareNew(HttpAuthMiddleware):
-
+    #json request need Authorization header to validate
     def spider_opened(self, spider):
         auth=get_oauth.get_oauth()
         if auth:
@@ -55,6 +90,8 @@ class RedirectMiddlewareNew(RedirectMiddleware):
         allowed_status = (301,302,303, 307)
         if 'Location' not in response.headers or response.status not in allowed_status:
             return response
+    #rewrite the process_response,if get http status 302,do not redirect to the new location,or it will get dupefilter
+    #just resend the request until it get the right response
         if response.status in (302,):
             return_req = self._redirect(request,request,spider,response.status)
             print '-----------------'+return_req.url

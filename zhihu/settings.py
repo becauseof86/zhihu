@@ -22,16 +22,16 @@ NEWSPIDER_MODULE = 'zhihu.spiders'
 ROBOTSTXT_OBEY =False 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS =1 
+CONCURRENT_REQUESTS =4 
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY =1 
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 4
 
-CONCURRENT_REQUESTS_PER_IP = 1
+CONCURRENT_REQUESTS_PER_IP = 4
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
@@ -41,9 +41,9 @@ COOKIES_ENABLED = False
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
-   'Accept-Encoding': 'gzip, deflate, br',
+   'Accept':'application/json, text/plain, */*',
+   'Accept-Language': 'zh-CN,zh;q=0.8',
+   'Accept-Encoding': 'gzip, deflate, sdch, br',
    'Connection': 'keep-alive'
 }
 
@@ -56,6 +56,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
+    'zhihu.middlewares.DeleteRequestOfExistItemInMongodb':101,
     'zhihu.middlewares.HttpAuthMiddlewareNew':300, 
     'zhihu.middlewares.UserAgentMiddlewareNew': 500,
     'zhihu.middlewares.RedirectMiddlewareNew': 600,
